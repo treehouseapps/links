@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Links</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <link rel="stylesheet" href="/fontawesome-free-5.15.2-web/css/all.css">
+    <style>
+        .list {
+            display: inline-flex;
+            gap: 10px;
+        }
+
+        .list a {
+            cursor: pointer;
+            text-decoration: none;
+            color: black;
+        }
+
+        .inp-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+
+        .main-list {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+        }
+
+        .text-list {
+            display: grid;
+            grid-template-columns: 1fr;
+        }
+    </style>
+</head>
+
+<body style=" background-color: rgb(51, 51, 51);">
+    <div class=" container rounded-3 border border-5 border-dark my-5 bg-white" style="height:auto;">
+        <div>
+            <h1 class=" h1">Links</h1>
+            <form action="/add" method="post" class="row">
+                <div class=" col-8 inp-list">
+                    <input class=" py-3 form-control shadow" name="name" placeholder="Name" type="text" id="inputText"
+                        required>
+                    <input class=" py-3 form-control shadow" name="link" placeholder="Link" type="text" id="inputText"
+                        required>
+                    <input class=" py-3 form-control shadow" name="desc" placeholder="Description *optional" type="text"
+                        id="inputText">
+                </div>
+                <div class="col-2">
+                    <button type="submit" class=" mt-2 btn btn-dark"> Add </button>
+                </div>
+            </form action="" method="post">
+        </div>
+        <hr>
+        <div class=" row rounded bg-white">
+            <div class=" col-6">
+                <ul class="list-group" id="list">
+                    <%result.forEach(ite=>{%>
+                        <li class=" my-3 py-3 shadow list-group-item">
+                            <div class="row main-list">
+                                <div class="col-12 text-list">
+                                    <span class=" h4" id="text${listNum}">
+                                        <%=ite.name%>
+                                    </span>
+                                    <span class=" h6" id="text${listNum}">
+                                        <%=ite.desc%>
+                                    </span>
+                                </div>
+                                <div class="list">
+                                    <a href="/">Edit</a>
+                                    <a href="<%=ite.link%>">View</a>
+                                    <a href="/delete/<%=ite._id%>">Delete</a>
+                                </div>
+                            </div>
+                        </li>
+                        <%})%>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>

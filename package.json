@@ -1,0 +1,21 @@
+{
+  "name": "challenge",
+  "version": "1.0.0",
+  "description": "a lot of things",
+  "main": "index.js",
+  "scripts": {
+    "test": "hello"
+  },
+  "repository": {
+    "type": "git",
+    "url": "hola"
+  },
+  "keywords": [
+    "beki"
+  ],
+  "author": "new",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
