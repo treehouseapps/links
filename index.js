@@ -1,6 +1,5 @@
 const express = require('express')
 const app = express()
-require('dotenv').config()
 app.set('view engine', 'ejs')
 app.set('views', __dirname + '/view')
 app.use(express.urlencoded({ extended: true }))
@@ -36,7 +35,7 @@ app.get('/delete/:id', async (req, res) => {
 app.get('*', (req, res) => {
     res.render('404')
 })
-mongoose.connect(process.env.DBCONNECTION)
+mongoose.connect('mongodb+srv://Beki:78122775Beki@cluster0.6ypmi.mongodb.net/sites')
     .then(() => {
         app.listen(process.env.PORT, () => {
             console.log('Server Running in port ' + process.env.PORT)
