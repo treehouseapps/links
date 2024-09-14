@@ -16,6 +16,8 @@
   "author": "new",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.18.2"
+    "express": "^4.19.2",
+    "ejs": "^3.1.10",
+    "mongoose": "^8.5.3"
   }
 }
