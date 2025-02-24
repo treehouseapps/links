@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,27 +14,6 @@
             text-decoration: none;
             color: black;
         }
-
-        .imageholder {
-            width: 12rem;
-            height: 6rem;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .imageholder img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        .divide {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
     </style>
 </head>
 
@@ -41,7 +21,7 @@
     <div class="container rounded-3 border border-5 border-dark my-5 bg-white" style="height:auto;">
         <div>
             <h1 class="h1">Links</h1>
-            <form action="/add" method="post" class="row" enctype="multipart/form-data">
+            <form action="/add" method="post" class="row">
                 <div class="col-md-8 row g-2">
                     <div class="col-md-4">
                         <input class="py-3 form-control shadow" name="name" placeholder="Name" type="text" required>
@@ -53,12 +33,6 @@
                         <input class="py-3 form-control shadow" name="desc" placeholder="Description *optional"
                             type="text">
                     </div>
-                    <div class="col-md-4">
-                        <label for="imageUpload" class="form-label">Choose Image <span
-                                class="text-muted">(Optional)</span></label>
-                        <input class="form-control" type="file" id="image" name="image">
-                    </div>
-
                 </div>
                 <div class="col-md-2">
                     <button type="submit" class="mt-2 btn btn-dark">Add</button>
@@ -69,26 +43,20 @@
         <div class="row rounded bg-white">
             <ul class="row list-unstyled" id="list">
                 <% result.forEach(ite=> { %>
-                    <li class="col-12 col-md-6 col-lg-6 shadow list-group-item border">
+                    <li class="col-12 col-md-6 col-lg-6 my-3 py-3 shadow list-group-item border">
                         <div class="p-3 bg-light rounded">
-                            <div class="divide">
-                                <div>
-                                    <span class="h4">
-                                        <%= ite.name %>
-                                    </span>
-                                    <p class="h6">
-                                        <%= ite.desc %>
-                                    </p>
-                                    <div class="d-flex gap-3">
-                                        <a href="/">Edit</a>
-                                        <a href="https://<%= ite.link %>" target="_blank"
-                                            rel="noopener noreferrer">View</a>
-                                        <a href="delete/<%=ite._id%>">Delete</a>
-                                    </div>
-                                </div>
-                                <div class="imageholder">
-                                    <img src="../uploads/<%=ite.image%>" alt="img" srcset="">
-                                </div>
+                            <div>
+                                <span class="h4">
+                                    <%= ite.name %>
+                                </span>
+                                <p class="h6">
+                                    <%= ite.desc %>
+                                </p>
+                            </div>
+                            <div class="d-flex gap-3">
+                                <a href="/">Edit</a>
+                                <a href="<%= ite.link %>">View</a>
+                                <a href="/delete/<%= ite._id %>">Delete</a>
                             </div>
                         </div>
                     </li>
