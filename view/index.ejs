@@ -8,6 +8,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
     <link rel="stylesheet" href="/fontawesome-free-5.15.2-web/css/all.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"
+        defer></script>
+
     <style>
         .list a {
             cursor: pointer;
@@ -20,24 +24,57 @@
 <body style="background-color: rgb(51, 51, 51);">
     <div class="container rounded-3 border border-5 border-dark my-5 bg-white" style="height:auto;">
         <div>
-            <h1 class="h1">Links</h1>
-            <form action="/add" method="post" class="row">
-                <div class="col-md-8 row g-2">
-                    <div class="col-md-4">
-                        <input class="py-3 form-control shadow" name="name" placeholder="Name" type="text" required>
+            <h1 class="h1" data-bs-toggle="modal" data-bs-target="#exampleModal">Links</h1>
+            <%if(session=='treehouse' ){%>
+                <button class="btn btn-dark"><a href="/logout"
+                        style="text-decoration: none; color: white;">Logout</a></button>
+                <%}%>
+                    <div>
+                        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Login</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form action="/login" method="post">
+                                            <input type="text" name="name">
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="submit" class="btn btn-primary"
+                                            data-bs-dismiss="modal">Login</button>
+                                    </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-4">
-                        <input class="py-3 form-control shadow" name="link" placeholder="Link" type="text" required>
-                    </div>
-                    <div class="col-md-4">
-                        <input class="py-3 form-control shadow" name="desc" placeholder="Description *optional"
-                            type="text">
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <button type="submit" class="mt-2 btn btn-dark">Add</button>
-                </div>
-            </form>
+                    <form action="/add" method="post" class="row">
+                        <div class="col-md-8 row g-2">
+                            <div class="col-md-4">
+                                <input class="py-3 form-control shadow" name="name" placeholder="Name" type="text"
+                                    required>
+                            </div>
+                            <div class="col-md-4">
+                                <input class="py-3 form-control shadow" name="link" placeholder="Link" type="text"
+                                    required>
+                            </div>
+                            <div class="col-md-4">
+                                <input class="py-3 form-control shadow" name="desc" placeholder="Description *optional"
+                                    type="text">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <%if(session){%>
+                                <button type="submit" class="mt-2 btn btn-dark">Add</button>
+                                <% } else { %>
+                                    <button type="submit" class="mt-2 btn btn-dark" disabled>Add</button>
+                                    <%}%>
+                        </div>
+                    </form>
         </div>
         <hr>
         <div class="row rounded bg-white">
@@ -54,9 +91,56 @@
                                 </p>
                             </div>
                             <div class="d-flex gap-3">
-                                <a href="/">Edit</a>
+                                <a href="/" data-bs-toggle="modal" data-bs-target="#exampleModal1">Edit</a>
+                                <div class="modal fade" id="exampleModal1" tabindex="-1"
+                                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h1 class="modal-title fs-5" id="exampleModalLabel1">Update
+                                                </h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form action="/update/<%= ite._id %>" method="post" class="row">
+                                                    <div class="col-md-12 row g-2">
+                                                        <div class="col-md-6">
+                                                            <input class="py-3 form-control shadow" name="name"
+                                                                placeholder="Name" type="text" required>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <input class="py-3 form-control shadow" name="link"
+                                                                placeholder="Link" type="text" required>
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <input class="py-3 form-control shadow" name="desc"
+                                                                placeholder="Description *optional" type="text">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <button type="button" class="mt-2 btn btn-dark">Clear</button>
+                                                    </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <%if(session){%>
+                                                    <button type="submit" class="btn btn-primary"
+                                                        data-bs-dismiss="modal">Update</button>
+                                                    <% } else { %>
+                                                        <button class="btn btn-primary" disabled>Update</button>
+                                                        <%}%>
+                                            </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
                                 <a href="<%= ite.link %>">View</a>
-                                <a href="/delete/<%= ite._id %>">Delete</a>
+                                <%if(session){%>
+                                    <a href="/delete/<%= ite._id %>">Delete</a>
+                                    <%}%>
+                                        <%if(!session){%>
+                                            <a href="/">Delete</a>
+                                            <%}%>
                             </div>
                         </div>
                     </li>
@@ -64,7 +148,6 @@
             </ul>
         </div>
     </div>
-    <script src="script.js"></script>
 </body>
 
 </html>
