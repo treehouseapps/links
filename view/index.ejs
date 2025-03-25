@@ -107,19 +107,23 @@
                                                     <div class="col-md-12 row g-2">
                                                         <div class="col-md-6">
                                                             <input class="py-3 form-control shadow" name="name"
-                                                                placeholder="Name" type="text" required>
+                                                                value="<%=ite.name%>" id="a" placeholder="Name"
+                                                                type="text" required>
                                                         </div>
                                                         <div class="col-md-6">
                                                             <input class="py-3 form-control shadow" name="link"
-                                                                placeholder="Link" type="text" required>
+                                                                value="<%=ite.link%>" id="b" placeholder="Link"
+                                                                type="text" required>
                                                         </div>
                                                         <div class="col-md-12">
                                                             <input class="py-3 form-control shadow" name="desc"
+                                                                value="<%=ite.desc%>" id="c"
                                                                 placeholder="Description *optional" type="text">
                                                         </div>
                                                     </div>
                                                     <div class="col-md-2">
-                                                        <button type="button" class="mt-2 btn btn-dark">Clear</button>
+                                                        <button type="button" class="mt-2 btn btn-dark"
+                                                            onclick="clearFields()">Clear</button>
                                                     </div>
                                             </div>
                                             <div class="modal-footer">
@@ -151,3 +155,13 @@
 </body>
 
 </html>
+<script>
+    const clearFields = () => {
+        let inputName = document.getElementById('a')
+        let inputLink = document.getElementById('b')
+        let inputDesc = document.getElementById('c')
+        inputName.value = ''
+        inputLink.value = ''
+        inputDesc.value = ''
+    }
+</script>
