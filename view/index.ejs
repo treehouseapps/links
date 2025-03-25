@@ -91,14 +91,15 @@
                                 </p>
                             </div>
                             <div class="d-flex gap-3">
-                                <a href="/" data-bs-toggle="modal" data-bs-target="#exampleModal1">Edit</a>
-                                <div class="modal fade" id="exampleModal1" tabindex="-1"
-                                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <a href="/" data-bs-toggle="modal"
+                                    data-bs-target="#exampleModal_<%= ite._id %>">Edit</a>
+                                <div class="modal fade" id="exampleModal_<%= ite._id %>" tabindex="-1"
+                                    aria-labelledby="exampleModalLabel_<%= ite._id %>" aria-hidden="true">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h1 class="modal-title fs-5" id="exampleModalLabel1">Update
-                                                </h1>
+                                                <h1 class="modal-title fs-5" id="exampleModalLabel_<%= ite._id %>">
+                                                    Update</h1>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                     aria-label="Close"></button>
                                             </div>
@@ -107,23 +108,23 @@
                                                     <div class="col-md-12 row g-2">
                                                         <div class="col-md-6">
                                                             <input class="py-3 form-control shadow" name="name"
-                                                                value="<%=ite.name%>" id="a" placeholder="Name"
-                                                                type="text" required>
+                                                                value="<%= ite.name %>" id="a_<%= ite._id %>"
+                                                                placeholder="Name" type="text" required>
                                                         </div>
                                                         <div class="col-md-6">
                                                             <input class="py-3 form-control shadow" name="link"
-                                                                value="<%=ite.link%>" id="b" placeholder="Link"
-                                                                type="text" required>
+                                                                value="<%= ite.link %>" id="b_<%= ite._id %>"
+                                                                placeholder="Link" type="text" required>
                                                         </div>
                                                         <div class="col-md-12">
                                                             <input class="py-3 form-control shadow" name="desc"
-                                                                value="<%=ite.desc%>" id="c"
+                                                                value="<%= ite.desc %>" id="c_<%= ite._id %>"
                                                                 placeholder="Description *optional" type="text">
                                                         </div>
                                                     </div>
                                                     <div class="col-md-2">
                                                         <button type="button" class="mt-2 btn btn-dark"
-                                                            onclick="clearFields()">Clear</button>
+                                                            onclick="clearFields('<%= ite._id %>')">Clear</button>
                                                     </div>
                                             </div>
                                             <div class="modal-footer">
@@ -156,12 +157,13 @@
 
 </html>
 <script>
-    const clearFields = () => {
-        let inputName = document.getElementById('a')
-        let inputLink = document.getElementById('b')
-        let inputDesc = document.getElementById('c')
-        inputName.value = ''
-        inputLink.value = ''
-        inputDesc.value = ''
-    }
+    const clearFields = (id) => {
+        let inputName = document.getElementById(`a_${id}`);
+        let inputLink = document.getElementById(`b_${id}`);
+        let inputDesc = document.getElementById(`c_${id}`);
+
+        if (inputName) inputName.value = '';
+        if (inputLink) inputLink.value = '';
+        if (inputDesc) inputDesc.value = '';
+    };
 </script>

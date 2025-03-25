@@ -66,7 +66,6 @@ app.post('/update/:id', async (req, res) => {
         if (req.session.name == 'treehouse') {
             let id = req.params.id;
             let updatedData = req.body
-            console.log(req.body)
             await collection.findByIdAndUpdate(id, updatedData, { new: true });
             res.redirect('/')
         }
