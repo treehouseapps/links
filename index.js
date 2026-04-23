@@ -5,12 +5,12 @@ const session = require("express-session");
 
 require("dotenv").config();
 
-// ---------- VIEW + BODY ----------
+// ---------- VIEW ----------
 app.set("view engine", "ejs");
 app.set("views", __dirname + "/view");
 app.use(express.urlencoded({ extended: true }));
 
-// ---------- SESSION (KEEPING IT) ----------
+// ---------- SESSION (kept but lightweight) ----------
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -20,23 +20,11 @@ app.use(
   }),
 );
 
-// ---------- MONGOOSE CACHE (IMPORTANT FOR VERCEL) ----------
-let cached = global.mongoose;
-
-if (!cached) {
-  cached = global.mongoose = { conn: null, promise: null };
-}
-
-async function connectDB() {
-  if (cached.conn) return cached.conn;
-
-  if (!cached.promise) {
-    cached.promise = mongoose.connect(process.env.DBCONNECTION).then((m) => m);
-  }
-
-  cached.conn = await cached.promise;
-  return cached.conn;
-}
+// ---------- FAST DB CONNECT (IMPORTANT FIX) ----------
+mongoose
+  .connect(process.env.DBCONNECTION)
+  .then(() => console.log("DB connected"))
+  .catch((err) => console.log("DB error", err));
 
 // ---------- MODEL ----------
 const schema = new mongoose.Schema({
@@ -48,12 +36,9 @@ const schema = new mongoose.Schema({
 const collection = mongoose.model("sites", schema);
 
 // ---------- ROUTES ----------
-
 app.get("/", async (req, res) => {
   try {
-    await connectDB(); // 🔥 critical fix for timeout
-
-    const result = await collection.find().lean();
+    const result = await collection.find().lean(); // 🔥 important speed fix
 
     res.render("index", {
       result,
@@ -61,14 +46,13 @@ app.get("/", async (req, res) => {
     });
   } catch (err) {
     console.log(err);
-    res.status(500).send("Database error");
+    res.status(500).send("Error");
   }
 });
 
+// ---------- CRUD ----------
 app.post("/add", async (req, res) => {
   try {
-    await connectDB();
-
     if (req.session.name === "treehouse") {
       await collection.insertMany(req.body);
     }
@@ -79,18 +63,12 @@ app.post("/add", async (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  try {
-    req.session.name = req.body.name;
-    res.redirect("/");
-  } catch {
-    res.redirect("/");
-  }
+  req.session.name = req.body.name;
+  res.redirect("/");
 });
 
 app.post("/update/:id", async (req, res) => {
   try {
-    await connectDB();
-
     if (req.session.name === "treehouse") {
       await collection.findByIdAndUpdate(req.params.id, req.body);
     }
@@ -102,8 +80,6 @@ app.post("/update/:id", async (req, res) => {
 
 app.get("/delete/:id", async (req, res) => {
   try {
-    await connectDB();
-
     if (req.session.name === "treehouse") {
       await collection.deleteOne({ _id: req.params.id });
     }
