@@ -30,6 +30,7 @@ const schema = new mongoose.Schema({
 const collection = new mongoose.model("sites", schema);
 
 app.get("/", async (req, res) => {
+  await connectDB();
   const result = await collection.find();
   if (req.session) {
     res.render("index", { result, session: req.session.name });
@@ -90,16 +91,18 @@ app.get("/logout", (req, res) => {
 app.get("*", (req, res) => {
   res.render("404");
 });
-mongoose
-  .connect(process.env.DBCONNECTION)
-  .then(() => {
-    console.log("Connected to database");
-    // app.listen(process.env.PORT, () => {
-    //   console.log("Server Running in port " + process.env.PORT);
-    // });
-  })
-  .catch(() => {
-    console.log("Error connecting to database");
-  });
+let isConnected = false;
+
+const connectDB = async () => {
+  if (isConnected) return;
+
+  try {
+    await mongoose.connect(process.env.DBCONNECTION);
+    isConnected = true;
+    console.log("Connected to DB");
+  } catch (err) {
+    console.log("DB connection error");
+  }
+};
 
 module.exports = app;
