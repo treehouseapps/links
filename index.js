@@ -10,6 +10,8 @@ app.set("view engine", "ejs");
 app.set("views", __dirname + "/view");
 app.use(express.urlencoded({ extended: true }));
 
+console.log("🚀 App starting...");
+
 // ---------- SESSION (kept but lightweight) ----------
 app.use(
   session({
@@ -19,7 +21,7 @@ app.use(
     cookie: { maxAge: 200000 },
   }),
 );
-
+console.log("🔌 Connecting to MongoDB...");
 // ---------- FAST DB CONNECT (IMPORTANT FIX) ----------
 mongoose
   .connect(process.env.DBCONNECTION)
@@ -37,17 +39,17 @@ const collection = mongoose.model("sites", schema);
 
 // ---------- ROUTES ----------
 app.get("/", async (req, res) => {
-  try {
-    const result = await collection.find().lean(); // 🔥 important speed fix
+  console.log("📥 / route hit");
 
-    res.render("index", {
-      result,
-      session: req.session?.name || null,
-    });
-  } catch (err) {
-    console.log(err);
-    res.status(500).send("Error");
-  }
+  const result = await collection.find();
+  console.log("📦 DB query done");
+
+  res.render("index", {
+    result,
+    session: req.session?.name || null,
+  });
+
+  console.log("📤 Response sent");
 });
 
 // ---------- CRUD ----------
@@ -97,6 +99,6 @@ app.get("/logout", (req, res) => {
 app.get("*", (req, res) => {
   res.render("404");
 });
-
+console.log("📦 Exporting app...");
 // ---------- EXPORT ----------
 module.exports = app;
