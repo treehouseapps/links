@@ -23,11 +23,26 @@ app.use(
 );
 console.log("🔌 Connecting to MongoDB...");
 // ---------- FAST DB CONNECT (IMPORTANT FIX) ----------
-mongoose
-  .connect(process.env.DBCONNECTION)
-  .then(() => console.log("DB connected"))
-  .catch((err) => console.log("DB error", err));
+let cached = global.mongoose;
 
+if (!cached) {
+  cached = global.mongoose = { conn: null, promise: null };
+}
+
+const connectDB = async () => {
+  if (cached.conn) return cached.conn;
+
+  if (!cached.promise) {
+    console.log("🔌 Creating new DB connection...");
+    cached.promise = mongoose.connect(process.env.DBCONNECTION).then((m) => {
+      console.log("✅ MongoDB connected");
+      return m;
+    });
+  }
+
+  cached.conn = await cached.promise;
+  return cached.conn;
+};
 // ---------- MODEL ----------
 const schema = new mongoose.Schema({
   name: String,
@@ -41,15 +56,16 @@ const collection = mongoose.model("sites", schema);
 app.get("/", async (req, res) => {
   console.log("📥 / route hit");
 
-  const result = await collection.find();
+  await connectDB(); // 🔥 IMPORTANT FIX
+
+  const result = await collection.find().lean();
+
   console.log("📦 DB query done");
 
   res.render("index", {
     result,
     session: req.session?.name || null,
   });
-
-  console.log("📤 Response sent");
 });
 
 // ---------- CRUD ----------
