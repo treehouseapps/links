@@ -33,12 +33,22 @@ if (!cached) {
 async function connectDB() {
   if (cached.conn) return cached.conn;
 
-  console.log("🔌 Creating DB connection...");
+  if (!cached.promise) {
+    console.log("🔌 Creating DB connection...");
 
-  cached.promise = mongoose.connect(process.env.DBCONNECTION).then((m) => {
-    console.log("✅ MongoDB connected");
-    return m;
-  });
+    cached.promise = mongoose
+      .connect(process.env.DBCONNECTION, {
+        serverSelectionTimeoutMS: 3000, // 🔥 fail fast instead of hanging
+      })
+      .then((m) => {
+        console.log("✅ MongoDB connected");
+        return m;
+      })
+      .catch((err) => {
+        console.log("❌ DB error:", err.message);
+        throw err;
+      });
+  }
 
   cached.conn = await cached.promise;
   return cached.conn;
@@ -56,16 +66,21 @@ const collection = mongoose.model("sites", schema);
 app.get("/", async (req, res) => {
   console.log("📥 / route hit");
 
-  await connectDB(); // 🔥 MUST WAIT PROPERLY
+  try {
+    await connectDB();
 
-  const result = await collection.find().lean();
+    const result = await collection.find().lean();
 
-  console.log("📦 DB query done");
+    console.log("📦 DB query done");
 
-  res.render("index", {
-    result,
-    session: req.session?.name || null,
-  });
+    res.render("index", {
+      result,
+      session: req.session?.name || null,
+    });
+  } catch (err) {
+    console.log("❌ Route error:", err.message);
+    res.status(500).send("DB error");
+  }
 });
 
 // ---------- CRUD ----------
