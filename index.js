@@ -5,10 +5,12 @@ const session = require("express-session");
 
 require("dotenv").config();
 
+// ---------- VIEW + BODY ----------
 app.set("view engine", "ejs");
 app.set("views", __dirname + "/view");
 app.use(express.urlencoded({ extended: true }));
 
+// ---------- SESSION (KEEPING IT) ----------
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -18,11 +20,25 @@ app.use(
   }),
 );
 
-mongoose
-  .connect(process.env.DBCONNECTION)
-  .then(() => console.log("Connected to DB"))
-  .catch((err) => console.log("DB error", err));
+// ---------- MONGOOSE CACHE (IMPORTANT FOR VERCEL) ----------
+let cached = global.mongoose;
 
+if (!cached) {
+  cached = global.mongoose = { conn: null, promise: null };
+}
+
+async function connectDB() {
+  if (cached.conn) return cached.conn;
+
+  if (!cached.promise) {
+    cached.promise = mongoose.connect(process.env.DBCONNECTION).then((m) => m);
+  }
+
+  cached.conn = await cached.promise;
+  return cached.conn;
+}
+
+// ---------- MODEL ----------
 const schema = new mongoose.Schema({
   name: String,
   link: String,
@@ -31,9 +47,13 @@ const schema = new mongoose.Schema({
 
 const collection = mongoose.model("sites", schema);
 
+// ---------- ROUTES ----------
+
 app.get("/", async (req, res) => {
   try {
-    const result = await collection.find();
+    await connectDB(); // 🔥 critical fix for timeout
+
+    const result = await collection.find().lean();
 
     res.render("index", {
       result,
@@ -47,6 +67,8 @@ app.get("/", async (req, res) => {
 
 app.post("/add", async (req, res) => {
   try {
+    await connectDB();
+
     if (req.session.name === "treehouse") {
       await collection.insertMany(req.body);
     }
@@ -67,6 +89,8 @@ app.post("/login", (req, res) => {
 
 app.post("/update/:id", async (req, res) => {
   try {
+    await connectDB();
+
     if (req.session.name === "treehouse") {
       await collection.findByIdAndUpdate(req.params.id, req.body);
     }
@@ -78,6 +102,8 @@ app.post("/update/:id", async (req, res) => {
 
 app.get("/delete/:id", async (req, res) => {
   try {
+    await connectDB();
+
     if (req.session.name === "treehouse") {
       await collection.deleteOne({ _id: req.params.id });
     }
@@ -96,4 +122,5 @@ app.get("*", (req, res) => {
   res.render("404");
 });
 
+// ---------- EXPORT ----------
 module.exports = app;
