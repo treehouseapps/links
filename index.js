@@ -100,9 +100,10 @@ app.get('*', (req, res) => {
 })
 mongoose.connect(process.env.DBCONNECTION)
     .then(() => {
-        app.listen(process.env.PORT, () => {
-            console.log('Server Running in port ' + process.env.PORT)
-        })
+        // app.listen(process.env.PORT, () => {
+        //     console.log('Server Running in port ' + process.env.PORT)
+        // })
+        module.exports = app;
     })
     .catch(() => { console.log('Error connection to database') })
 
