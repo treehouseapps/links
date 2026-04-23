@@ -23,26 +23,27 @@ app.use(
 );
 console.log("🔌 Connecting to MongoDB...");
 // ---------- FAST DB CONNECT (IMPORTANT FIX) ----------
+const mongoose = require("mongoose");
+
 let cached = global.mongoose;
 
 if (!cached) {
   cached = global.mongoose = { conn: null, promise: null };
 }
 
-const connectDB = async () => {
+async function connectDB() {
   if (cached.conn) return cached.conn;
 
-  if (!cached.promise) {
-    console.log("🔌 Creating new DB connection...");
-    cached.promise = mongoose.connect(process.env.DBCONNECTION).then((m) => {
-      console.log("✅ MongoDB connected");
-      return m;
-    });
-  }
+  console.log("🔌 Creating DB connection...");
+
+  cached.promise = mongoose.connect(process.env.DBCONNECTION).then((m) => {
+    console.log("✅ MongoDB connected");
+    return m;
+  });
 
   cached.conn = await cached.promise;
   return cached.conn;
-};
+}
 // ---------- MODEL ----------
 const schema = new mongoose.Schema({
   name: String,
@@ -56,7 +57,7 @@ const collection = mongoose.model("sites", schema);
 app.get("/", async (req, res) => {
   console.log("📥 / route hit");
 
-  await connectDB(); // 🔥 IMPORTANT FIX
+  await connectDB(); // 🔥 MUST WAIT PROPERLY
 
   const result = await collection.find().lean();
 
