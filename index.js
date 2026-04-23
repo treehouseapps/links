@@ -97,8 +97,9 @@ mongoose
     // app.listen(process.env.PORT, () => {
     //   console.log("Server Running in port " + process.env.PORT);
     // });
-    module.exports = app;
   })
   .catch(() => {
     console.log("Error connecting to database");
   });
+
+module.exports = app;
