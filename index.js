@@ -23,7 +23,6 @@ app.use(
 );
 console.log("🔌 Connecting to MongoDB...");
 // ---------- FAST DB CONNECT (IMPORTANT FIX) ----------
-const mongoose = require("mongoose");
 
 let cached = global.mongoose;
 
